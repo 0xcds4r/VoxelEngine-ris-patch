@@ -37,17 +37,17 @@ int attrs[] = {
 		2,  0 //null terminator
 };
 
-LineBatch *lineBatch;
+//LineBatch *lineBatch;
 
 void init_renderer(){
 	crosshair = new Mesh(vertices, 4, attrs);
-	lineBatch = new LineBatch(4096);
+	//lineBatch = new LineBatch(4096);
 }
 
 
 void finalize_renderer(){
 	delete crosshair;
-	delete lineBatch;
+	//delete lineBatch;
 }
 
 void draw_chunk(size_t index, Camera* camera, Shader* shader, bool occlusion){
@@ -98,7 +98,7 @@ bool chunks_comparator(size_t i, size_t j) {
 
 void draw_world(Camera* camera, Assets* assets,
 				Chunks* chunks, bool occlusion){
-	glClearColor(0.7f,0.71f,0.73f,1);
+	glClearColor(0.7f,0.81f,1.0f,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	_chunks = chunks;
@@ -107,12 +107,12 @@ void draw_world(Camera* camera, Assets* assets,
 	Texture* texture = assets->getTexture("block");
 	Shader* shader = assets->getShader("main");
 	Shader* crosshairShader = assets->getShader("crosshair");
-	Shader* linesShader = assets->getShader("lines");
+	//Shader* linesShader = assets->getShader("lines");
 	shader->use();
 	shader->uniformMatrix("u_proj", camera->getProjection());
 	shader->uniformMatrix("u_view", camera->getView());
 	shader->uniform1f("u_gamma", 1.6f);
-	shader->uniform3f("u_skyLightColor", 1.8f,1.8f,1.8f);
+	shader->uniform3f("u_skyLightColor", 2.2f,2.2f,2.2f);
 	shader->uniform3f("u_fogColor", 0.7f,0.71f,0.73f);
 	shader->uniform3f("u_cameraPos", camera->position.x,camera->position.y,camera->position.z);
 	texture->bind();
@@ -146,10 +146,10 @@ void draw_world(Camera* camera, Assets* assets,
 	crosshairShader->uniform1f("u_scale", 1.0f / ((float)Window::height / 1000.0f));
 	crosshair->draw(GL_LINES);
 
-	linesShader->use();
-	linesShader->uniformMatrix("u_projview", camera->getProjection()*camera->getView());
-	glLineWidth(2.0f);
-	lineBatch->render();
+	//linesShader->use();
+	//linesShader->uniformMatrix("u_projview", camera->getProjection()*camera->getView());
+	//glLineWidth(2.0f);
+	//lineBatch->render();
 }
 
 #endif // WORLD_RENDERER_CPP
