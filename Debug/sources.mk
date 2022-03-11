@@ -31,5 +31,6 @@ src/loaders \
 src/objects \
 src/physics \
 src/voxels \
+src/maths \
 src/window \
 

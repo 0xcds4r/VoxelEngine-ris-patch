@@ -70,7 +70,7 @@ void close_world(WorldFiles* wfile, Chunks* chunks){
 #define RUN_SPEED_MUL 1.5f
 #define CROUCH_ZOOM 0.9f
 #define RUN_ZOOM 1.1f
-#define C_ZOOM 0.2f
+#define C_ZOOM 0.1f
 #define ZOOM_SPEED 16.0f
 #define DEFAULT_AIR_DAMPING 0.1f
 #define PLAYER_NOT_ONGROUND_DAMPING 10.0f
@@ -117,6 +117,8 @@ void update_controls(PhysicsSolver* physics,
 	camera->position.y = hitbox->position.y + 0.5f;
 	camera->position.z = hitbox->position.z;
 
+	if (player->flight && hitbox->grounded)
+		player->flight = false;
 	// Camera shaking
 	player->interpVel = player->interpVel * (1.0f - delta * 5) + hitbox->velocity * delta * 0.1f;
 	if (hitbox->grounded && player->interpVel.y < 0.0f){
@@ -130,14 +132,13 @@ void update_controls(PhysicsSolver* physics,
 	camera->position += camera->up * abs(cos(shakeTimer)) * CAMERA_SHAKING_OFFSET_Y * player->cameraShaking;
 	camera->position -= min(player->interpVel * 0.05f, 1.0f);
 
-	
-	//Fly
 	if (Events::jpressed(GLFW_KEY_F)){
 		player->flight = !player->flight;
-		if (player->flight)
-			player->hitbox->position.y += 0.05;
-	} else if (hitbox->grounded)
-		player->flight = false;
+		if (player->flight){
+			hitbox->velocity.y += 1;
+			hitbox->grounded = false;
+		}
+	}
 
 	// Field of view manipulations
 	float dt = min(1.0f, delta * ZOOM_SPEED);
@@ -159,10 +160,7 @@ void update_controls(PhysicsSolver* physics,
 	if (Events::pressed(GLFW_KEY_SPACE) && hitbox->grounded){
 		hitbox->velocity.y = JUMP_FORCE;
 	}
-	if (Events::pressed(GLFW_KEY_R)){
-		speed *=4;
-		speed *=4;
-	}
+
 	vec3 dir(0,0,0);
 	if (Events::pressed(GLFW_KEY_W)){
 		dir.x += camera->dir.x;
@@ -225,7 +223,7 @@ void update_interaction(Chunks* chunks, PhysicsSolver* physics, Player* player, 
 	vec3 iend;
 	voxel* vox = chunks->rayCast(camera->position, camera->front, 10.0f, end, norm, iend);
 	if (vox != nullptr){
-		//lineBatch->box(iend.x+0.5f, iend.y+0.5f, iend.z+0.5f, 1.005f,1.005f,1.005f, 0,0,0,0.5f);
+		lineBatch->box(iend.x+0.5f, iend.y+0.5f, iend.z+0.5f, 1.005f,1.005f,1.005f, 0,0,0,0.5f);
 
 		if (Events::jclicked(GLFW_MOUSE_BUTTON_1)){
 			int x = (int)iend.x;
@@ -268,7 +266,7 @@ int main() {
 
 	Camera *camera = new Camera(vec3(-320,255,32), radians(90.0f));
 	WorldFiles *wfile = new WorldFiles("world/", REGION_VOL * (CHUNK_VOL * 2 + 8));
-	Chunks *chunks = new Chunks(128,1,128, 0,0,0);
+	Chunks *chunks = new Chunks(34,1,34, 0,0,0);
 
 
 	Player* player = new Player(vec3(camera->position), 4.0f, camera);
@@ -293,7 +291,7 @@ int main() {
 
 	bool occlusion = false;
 
-	glfwSwapInterval(0);
+	glfwSwapInterval(1);
 
 	std::cout << "-- initializing finished" << std::endl;
 
@@ -302,9 +300,6 @@ int main() {
 		float currentTime = glfwGetTime();
 		delta = currentTime - lastTime;
 		lastTime = currentTime;
-
-		if (frame % 30 == 0)
-			std::cout << 1/delta << std::endl;
 
 		if (Events::jpressed(GLFW_KEY_O)){
 			occlusion = !occlusion;

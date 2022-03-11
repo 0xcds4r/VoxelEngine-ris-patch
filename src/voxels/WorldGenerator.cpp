@@ -7,6 +7,7 @@
 #include <glm/gtc/noise.hpp>
 #define FNL_IMPL
 #include "../maths/FastNoiseLite.h"
+#include "../maths/PerlinNoise.h"
 #include <time.h>
 #include <iostream>
 
@@ -28,53 +29,50 @@ public:
 	}
 };
 
-float calc_height(fnl_state *noise, fnl_state *noiser, fnl_state *noiseb, int real_x, int real_z){
+float calc_height(PerlinNoise noise, int real_x, int real_z){
 	const float s = 0.2f;
 	const float j = 40.0f;
 	const float h = -0.2f;
-	float a = abs(fnlGetNoise3D(noiser, real_x*0.005f*s*32,real_z*0.005f*s*32, 0.0f));
-	// float height = glm::perlin(glm::vec3(real_x*0.025f*s,real_z*0.025f*s, 0.0f))*0.5f;
-	// height += glm::perlin(glm::vec3(real_x*0.05f*s,real_z*0.05f*s, 0.0f))*0.25f;
-	// height += glm::perlin(glm::vec3(real_x*0.1f*s,real_z*0.1f*s, 0.0f))*0.225f;
-	// height += glm::perlin(glm::vec3(real_x*0.2f*s,real_z*0.2f*s, 0.0f))*0.15f;
-	// height += glm::perlin(glm::vec3(real_x*0.4f*s,real_z*0.4f*s, 0.0f))*0.08f;
-	// height += glm::perlin(glm::vec3(real_x*0.8f*s,real_z*0.8f*s, 0.0f))*0.04f;
-	// height *= glm::perlin(glm::vec3(real_x*0.0125f*s,real_z*0.0125f*s, 0.0f));
+	// float a = abs(fnlGetNoise3D(noiser, real_x*0.005f*s*32,real_z*0.005f*s*32, 0.0f));
 
-	//height = fnlGetNoise3D(noise, real_x*0.05f*s*32,real_z*0.05f*s*32, 0.0f)*0.25f;
-	double height = fnlGetNoise3D(noise, real_x*0.8f*s*32,real_z*0.8f*s*32, 0.0f)*0.04f*
-					fnlGetNoise3D(noiseb, real_x*0.2f*s*32,real_z*0.2f*s*32, 0.0f);
+	// double height = fnlGetNoise3D(noise, real_x*0.8f*s*32,real_z*0.8f*s*32, 0.0f)*0.04f*
+	// 				fnlGetNoise3D(noiseb, real_x*0.2f*s*32,real_z*0.2f*s*32, 0.0f);
 					
-	height += fnlGetNoise3D(noise, real_x*0.4f*s*32,real_z*0.4f*s*32, 0.0f)*0.08f*
-			  fnlGetNoise3D(noiseb, real_x*0.1f*s*32,real_z*0.1f*s*32, 0.0f);
+	// height += fnlGetNoise3D(noise, real_x*0.4f*s*32,real_z*0.4f*s*32, 0.0f)*0.08f*
+	// 		  fnlGetNoise3D(noiseb, real_x*0.1f*s*32,real_z*0.1f*s*32, 0.0f);
 
-	height += fnlGetNoise3D(noise, real_x*0.2f*s*32,real_z*0.2f*s*32, 0.0f)*0.15f*
-			  fnlGetNoise3D(noiseb, real_x*0.05f*s*32,real_z*0.05f*s*32, 0.0f);
+	// height += fnlGetNoise3D(noise, real_x*0.2f*s*32,real_z*0.2f*s*32, 0.0f)*0.15f*
+	// 		  fnlGetNoise3D(noiseb, real_x*0.05f*s*32,real_z*0.05f*s*32, 0.0f);
 
-	height += fnlGetNoise3D(noise, real_x*0.1f*s*32,real_z*0.1f*s*32, 0.0f)*0.225f*
-			  fnlGetNoise3D(noiseb, real_x*0.025f*s*32,real_z*0.025f*s*32, 0.0f);
+	// height += fnlGetNoise3D(noise, real_x*0.1f*s*32,real_z*0.1f*s*32, 0.0f)*0.225f*
+	// 		  fnlGetNoise3D(noiseb, real_x*0.025f*s*32,real_z*0.025f*s*32, 0.0f);
 
-	height += fnlGetNoise3D(noise, real_x*0.05f*s*32,real_z*0.05f*s*32, 0.0f)*0.5f*
-			  fnlGetNoise3D(noiseb, real_x*0.0125f*s*32,real_z*0.0125f*s*32, 0.0f);
+	// height += fnlGetNoise3D(noise, real_x*0.05f*s*32,real_z*0.05f*s*32, 0.0f)*0.5f*
+	// 		  fnlGetNoise3D(noiseb, real_x*0.0125f*s*32,real_z*0.0125f*s*32, 0.0f);
 
-	height += fnlGetNoise3D(noise, real_x*0.025f*s*32,real_z*0.025f*s*32, 0.0f)*0.5f*
-			  fnlGetNoise3D(noiseb, real_x*0.00625f*s*32,real_z*0.00625f*s*32, 0.0f);
+	// height += fnlGetNoise3D(noise, real_x*0.025f*s*32,real_z*0.025f*s*32, 0.0f)*0.5f*
+	// 		  fnlGetNoise3D(noiseb, real_x*0.00625f*s*32,real_z*0.00625f*s*32, 0.0f);
 
-	height += fnlGetNoise3D(noise, real_x*0.0125f*s*32,real_z*0.0125f*s*32, 0.0f)*
-			  fnlGetNoise3D(noiseb, real_x*0.003f*s*32,real_z*0.003f*s*32, 0.0f);
+	// height += fnlGetNoise3D(noise, real_x*0.0125f*s*32,real_z*0.0125f*s*32, 0.0f)*
+	// 		  fnlGetNoise3D(noiseb, real_x*0.003f*s*32,real_z*0.003f*s*32, 0.0f);
 	// height = (height + h) * pow(a, 2);
 	// float a = abs(sin(real_x * 0.02));
-	double zpre = -pow(pow(fmin(j / 8.0f * a, 1), 2) - 1, 4);
-	height += fmax(height - h / 5.0f, 0) * zpre;
-	double z = -pow(pow(fmin(j * a, 1), 2) - 1, 4);
-	height += fmax(height - h, 0) * z;
+	// double zpre = -pow(pow(fmin(j / 8.0f * a, 1), 2) - 1, 4);
+	// height += fmax(height - h / 5.0f, 0) * zpre;
+	// double z = -pow(pow(fmin(j * a, 1), 2) - 1, 4);
+	// height += fmax(height - h, 0) * z;
 	// height = abs(fnlGetNoise3D(noise, real_x*0.05f*s*32,real_z*0.05f*s*32, 0.0f));
 	//height += std::fmin(sqrt(abs(fnlGetNoise3D(noise, real_x*0.05f*s*32,real_z*0.05f*s*32, 0.0f))) - height, 0.2);
-	height = height * 1.0f + 1.0f;
+	// height = height * 1.0f + 1.0f;
 	// height *= height;
 	// height *= (140.0f)*0.12f/s;
 	// height += (42)*0.12f/s;
-	height *= 256;
+	// height *= 256;
+
+	double height = noise.noise(real_x/256., real_z/256., 1);
+
+	height *= 1;
+
 	std::cout << height << std::endl;
 	// height *= 30;
 	return height;
@@ -124,17 +122,19 @@ int generate_tree(fnl_state *noise, PseudoRandom* random, const float* heights, 
 }
 
 void WorldGenerator::generate(voxel* voxels, int cx, int cy, int cz){
-	fnl_state noise = fnlCreateState();
-	fnl_state noiser = fnlCreateState();
-	fnl_state noiseb = fnlCreateState();
-	noise.seed = 1;
-	noiser.seed = 2;
-	noiseb.seed = 3;
+	// fnl_state noise = fnlCreateState();
+	// fnl_state noiser = fnlCreateState();
+	// fnl_state noiseb = fnlCreateState();
+	// noise.seed = 1;
+	// noiser.seed = 2;
+	// noiseb.seed = 3;
 	// noise.noise_type = FNL_NOISE_PERLIN;
 	// noise.noise_type = FNL_NOISE_CELLULAR;
-	noise.noise_type = FNL_NOISE_OPENSIMPLEX2;
-	noiser.noise_type = FNL_NOISE_OPENSIMPLEX2S;
-	noiseb.noise_type = FNL_NOISE_OPENSIMPLEX2;
+	// noise.noise_type = FNL_NOISE_OPENSIMPLEX2;
+	// noiser.noise_type = FNL_NOISE_OPENSIMPLEX2S;
+	// noiseb.noise_type = FNL_NOISE_OPENSIMPLEX2;
+
+	PerlinNoise noise = PerlinNoise(1); 
 
 	PseudoRandom random;
 
@@ -144,7 +144,7 @@ void WorldGenerator::generate(voxel* voxels, int cx, int cy, int cz){
 		for (int x = 0; x < CHUNK_W; x++){
 			int real_x = x + cx * CHUNK_W;
 			int real_z = z + cz * CHUNK_D;
-			float height = calc_height(&noise, &noiser, &noiseb, real_x, real_z);
+			float height = calc_height(noise, real_x, real_z);
 			heights[z*CHUNK_W+x] = height;
 		}
 	}
