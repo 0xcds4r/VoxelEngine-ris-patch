@@ -1,6 +1,0 @@
-Debug/src/*.d
-Debug/src/*.o
-Debug/src/*/*.d
-Debug/src/*/*.o
-
-Debug/voxel_engine
