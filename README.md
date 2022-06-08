@@ -1,6 +1,8 @@
 # VoxelEngine-ris-patch
 Minecraft-like game engine in C++ with OpenGL
+
 Author: MihailRis
+
 Patched by 0xcds4r
 
 For a successful compilation, **you need a MinGW installation and special libraries (OpenGL, GLFW, PNG and etc.)**
